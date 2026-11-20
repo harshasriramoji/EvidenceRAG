@@ -18,8 +18,12 @@ from backend.app.services.ocr.extractor import FieldExtractor
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
-ALLOWED_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png"}
-ALLOWED_MIME_TYPES = {"application/pdf", "image/jpeg", "image/png", "image/jpg"}
+ALLOWED_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png", ".docx", ".doc"}
+ALLOWED_MIME_TYPES = {
+    "application/pdf", "image/jpeg", "image/png", "image/jpg",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword", "application/octet-stream"
+}
 VALID_CATEGORIES = [
     "Aadhaar Card",
     "Income Certificate",

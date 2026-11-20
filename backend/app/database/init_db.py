@@ -1,7 +1,10 @@
 import json
 import logging
 from backend.app.database.session import engine, Base, SessionLocal
-from backend.app.models.entities import User, VerificationRule, ScholarshipRequirement, ReferenceMaterial
+from backend.app.models.entities import (
+    User, VerificationRule, ScholarshipRequirement, ReferenceMaterial,
+    Guideline, Application, ApplicantProfile, Notification, SupportTicket
+)
 from backend.app.core.security import get_password_hash
 from backend.app.services.rag.knowledge_base import KNOWLEDGE_RULES
 
@@ -113,6 +116,7 @@ def init_database():
                 ("extracted_fields", "bbox_height", "FLOAT"),
                 ("admin_reviews", "previous_status", "VARCHAR"),
                 ("admin_reviews", "new_status", "VARCHAR"),
+                ("documents", "application_id", "INTEGER"),
             ]:
                 try:
                     conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {col_type}"))
@@ -225,6 +229,24 @@ def init_database():
                     is_active=True
                 )
                 db.add(rm)
+
+            # Seed into Guidelines table as well
+            existing_gl = db.query(Guideline).filter(Guideline.guideline_code == kb_item["id"]).first()
+            if not existing_gl:
+                gl = Guideline(
+                    guideline_code=kb_item["id"],
+                    title=kb_item["title"],
+                    issuing_authority="State & Central Government Portals",
+                    category=kb_item["category"],
+                    source_url="https://scholarships.gov.in",
+                    version="2026.1",
+                    effective_from="2025-04-01",
+                    effective_to="2027-03-31",
+                    content=kb_item["content"],
+                    is_approved=True,
+                    is_active=True
+                )
+                db.add(gl)
 
         db.commit()
         logger.info("Database initialized successfully.")

@@ -22,6 +22,9 @@ import { HistoryPage } from './pages/HistoryPage';
 import { VersionHistoryPage } from './pages/VersionHistoryPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { ApplicationsPage } from './pages/ApplicationsPage';
+import { GuidelinesPage } from './pages/GuidelinesPage';
+import { SupportPage } from './pages/SupportPage';
 
 // Admin Pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -30,6 +33,7 @@ import { AdminAuditPage } from './pages/admin/AdminAuditPage';
 import { AdminRulesPage } from './pages/admin/AdminRulesPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminKnowledgePage } from './pages/admin/AdminKnowledgePage';
+import { ReviewerPortalPage } from './pages/admin/ReviewerPortalPage';
 
 const ProtectedLayout: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({
   children,
@@ -252,6 +256,38 @@ export const App: React.FC = () => {
             element={
               <ProtectedLayout adminOnly>
                 <AdminUsersPage />
+              </ProtectedLayout>
+            }
+          />
+          <Route
+            path="/applications"
+            element={
+              <ProtectedLayout>
+                <ApplicationsPage />
+              </ProtectedLayout>
+            }
+          />
+          <Route
+            path="/guidelines"
+            element={
+              <ProtectedLayout>
+                <GuidelinesPage />
+              </ProtectedLayout>
+            }
+          />
+          <Route
+            path="/support"
+            element={
+              <ProtectedLayout>
+                <SupportPage />
+              </ProtectedLayout>
+            }
+          />
+          <Route
+            path="/reviewer"
+            element={
+              <ProtectedLayout adminOnly>
+                <ReviewerPortalPage />
               </ProtectedLayout>
             }
           />

@@ -30,3 +30,11 @@ def get_current_admin(current_user: User = Depends(get_current_user)) -> User:
             detail="Administrative privileges are required for this action."
         )
     return current_user
+
+def get_current_reviewer(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role not in ("reviewer", "admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Reviewer or administrative privileges are required for this action."
+        )
+    return current_user

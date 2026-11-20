@@ -25,6 +25,10 @@ class User(Base):
     audit_logs = relationship("AuditLog", back_populates="user", cascade="all, delete-orphan")
     readiness_scores = relationship("ReadinessScore", back_populates="user", cascade="all, delete-orphan")
     chat_conversations = relationship("ChatConversation", back_populates="user", cascade="all, delete-orphan")
+    profile = relationship("ApplicantProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    applications = relationship("Application", back_populates="user", cascade="all, delete-orphan", foreign_keys="[Application.user_id]")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+    support_tickets = relationship("SupportTicket", back_populates="user", cascade="all, delete-orphan")
 
 
 class Document(Base):
@@ -47,10 +51,12 @@ class Document(Base):
     raw_text = Column(Text, nullable=True)
     version = Column(Integer, default=1, nullable=False)
     language = Column(String(50), default="eng", nullable=False)  # eng, tel, mixed
+    application_id = Column(Integer, ForeignKey("applications.id"), nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     # Relationships
     user = relationship("User", back_populates="documents")
+    application = relationship("Application", back_populates="documents")
     extracted_fields = relationship("ExtractedField", back_populates="document", cascade="all, delete-orphan")
     issues = relationship("Issue", back_populates="document")
     versions = relationship("DocumentVersion", back_populates="document", cascade="all, delete-orphan")
@@ -302,3 +308,95 @@ class ChatMessage(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     conversation = relationship("ChatConversation", back_populates="messages")
+
+
+class ApplicantProfile(Base):
+    __tablename__ = "applicant_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False, index=True)
+    phone = Column(String(50), nullable=True)
+    date_of_birth = Column(String(50), nullable=True)
+    address = Column(Text, nullable=True)
+    institution_name = Column(String(255), nullable=True)
+    degree_program = Column(String(100), nullable=True)
+    enrollment_number = Column(String(100), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="profile")
+
+
+class Application(Base):
+    __tablename__ = "applications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    application_number = Column(String(100), unique=True, index=True, nullable=False)
+    title = Column(String(255), nullable=False)
+    scholarship_name = Column(String(255), nullable=False, index=True)
+    status = Column(String(50), default="Draft", nullable=False)  # Draft, Submitted, Under Review, Verified, Flagged, Needs Review
+    academic_year = Column(String(50), default="2025-2026")
+    notes = Column(Text, nullable=True)
+    reviewer_notes = Column(Text, nullable=True)
+    assigned_reviewer_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    submitted_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="applications", foreign_keys=[user_id])
+    documents = relationship("Document", back_populates="application")
+
+
+class Guideline(Base):
+    __tablename__ = "guidelines"
+
+    id = Column(Integer, primary_key=True, index=True)
+    guideline_code = Column(String(100), unique=True, index=True, nullable=False)
+    title = Column(String(255), nullable=False)
+    issuing_authority = Column(String(255), default="Government Authority", nullable=False)
+    category = Column(String(100), nullable=False, index=True)
+    source_url = Column(String(500), nullable=True)
+    version = Column(String(50), default="1.0", nullable=False)
+    effective_from = Column(String(50), nullable=True)
+    effective_to = Column(String(50), nullable=True)
+    content = Column(Text, nullable=False)
+    file_path = Column(String(500), nullable=True)
+    is_approved = Column(Boolean, default=True, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    title = Column(String(255), nullable=False)
+    message = Column(Text, nullable=False)
+    category = Column(String(50), default="info", nullable=False)  # info, warning, success, alert
+    link = Column(String(255), nullable=True)
+    is_read = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    user = relationship("User", back_populates="notifications")
+
+
+class SupportTicket(Base):
+    __tablename__ = "support_tickets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ticket_number = Column(String(50), unique=True, index=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    subject = Column(String(255), nullable=False)
+    category = Column(String(100), default="Verification Question", nullable=False)
+    priority = Column(String(50), default="Medium", nullable=False)  # Low, Medium, High, Urgent
+    status = Column(String(50), default="Open", nullable=False)  # Open, In Progress, Resolved, Closed
+    message = Column(Text, nullable=False)
+    admin_reply = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="support_tickets")
+

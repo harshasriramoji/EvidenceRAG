@@ -187,6 +187,45 @@ def process_document_ocr(file_path: str, mime_type: str, lang: str = "eng") -> D
             logger.error(f"Error parsing PDF with PyMuPDF: {e}")
             raise e
 
+    elif path.suffix.lower() in (".docx", ".doc") or "word" in mime_type:
+        try:
+            import docx
+            docx_doc = docx.Document(file_path)
+            doc_lines = []
+            for p in docx_doc.paragraphs:
+                if p.text.strip():
+                    doc_lines.append(p.text.strip())
+            for tbl in docx_doc.tables:
+                for row in tbl.rows:
+                    row_txt = " | ".join(c.text.strip() for c in row.cells if c.text.strip())
+                    if row_txt:
+                        doc_lines.append(row_txt)
+
+            full_text = "\n".join(doc_lines)
+            page_count = 1
+            pages_text.append({
+                "page_number": 1,
+                "text": full_text
+            })
+            text_blocks.append({
+                "page_number": 1,
+                "text": full_text[:500],
+                "bbox": [0.08, 0.08, 0.84, 0.84]
+            })
+            quality_info = {
+                "blur_variance": 450.0,
+                "is_blurry": False,
+                "is_low_res": False,
+                "is_rotated": False,
+                "width": 800,
+                "height": 1100,
+                "quality_score": 1.0,
+                "recommendation": "Document text extracted cleanly from digital Office XML structure."
+            }
+        except Exception as e:
+            logger.error(f"Error parsing Word document with python-docx: {e}")
+            raise e
+
     else:
         # Image file (JPG, PNG)
         quality_info = assess_image_quality(file_path)

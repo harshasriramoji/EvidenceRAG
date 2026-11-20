@@ -18,7 +18,10 @@ import {
   ListChecks,
   Bot,
   Columns2,
-  Shield
+  Shield,
+  FolderCheck,
+  HelpCircle,
+  ShieldCheck
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -67,6 +70,18 @@ export const Sidebar: React.FC = () => {
               <ListChecks className="h-4 w-4 text-emerald-600" />
               Application Checklist
             </NavLink>
+            <NavLink to="/applications" className={navClass}>
+              <FolderCheck className="h-4 w-4 text-[#2563EB]" />
+              Application Portfolios
+            </NavLink>
+            <NavLink to="/guidelines" className={navClass}>
+              <BookOpen className="h-4 w-4 text-emerald-600" />
+              Official Guidelines
+            </NavLink>
+            <NavLink to="/support" className={navClass}>
+              <HelpCircle className="h-4 w-4 text-purple-600" />
+              Support & Inquiries
+            </NavLink>
             <NavLink to="/assistant" className={navClass}>
               <Bot className="h-4 w-4 text-[#2563EB]" />
               Ask Document AI
@@ -92,6 +107,10 @@ export const Sidebar: React.FC = () => {
               <NavLink to="/admin" end className={navClass}>
                 <Sliders className="h-4 w-4 text-amber-600" />
                 Admin Dashboard
+              </NavLink>
+              <NavLink to="/reviewer" className={navClass}>
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                Reviewer Decision Portal
               </NavLink>
               <NavLink to="/admin/reviews" className={navClass}>
                 <ShieldAlert className="h-4 w-4 text-rose-600" />

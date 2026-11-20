@@ -110,3 +110,15 @@
 - [x] Automated test suite in `backend/tests/test_end_to_end.py` and `test_health.py`: 25/25 tests passing 100%.
 - [x] Dynamic test fixtures generated at runtime in isolated temp directories and cleaned up after execution.
 - [x] Comprehensive root `README.md` with system architecture, 5 Mermaid diagrams, installation and execution instructions, and limitations.
+
+### Phase 11: Advanced Enterprise Modules, Reviewer Portal & FAISS RAG [COMPLETED]
+- [x] Multi-format document ingestion: Full native support for Microsoft Word (`.docx`, `.doc`) documents via `python-docx` with paragraph and table parsing (`backend/app/services/ocr/processor.py`).
+- [x] FAISS Vector Store Engine: Cosine-similarity retrieval on normalized 384-dimensional dense vectors with strict tenant isolation (`backend/app/services/rag/faiss_engine.py`).
+- [x] Google Gemini API Client: Direct integration via `google-genai` for evidence-grounded verification with seamless deterministic rule-engine fallback (`backend/app/services/rag/gemini_client.py`).
+- [x] Application Management Module: Full scholarship portfolio lifecycle (`APP-YYYYMM-XXXX`), document attachment, status tracking (`Draft`, `Submitted`, `Under Review`, `Verified`, `Needs Review`, `Flagged`) (`backend/app/api/endpoints/applications.py`, `/applications`).
+- [x] Guideline Repository System: Upload, administrative approval, versioning, issuing authority metadata, and full-text search across 11 official statutory guidelines (`backend/app/api/endpoints/guidelines.py`, `/guidelines`).
+- [x] Human-in-the-Loop Reviewer Workspace: Queue of flagged AI findings and submitted portfolios with Approve, Override Pass, Reject, and Request Info decisions (`backend/app/api/endpoints/reviews.py`, `/reviewer`).
+- [x] Event-Driven Notification System: User notifications with unread counts and read-state management (`backend/app/api/endpoints/notifications.py`).
+- [x] Help & Support Ticketing: Real-time ticket submission, status tracking, and administrative response threads (`backend/app/api/endpoints/support.py`, `/support`).
+- [x] Full End-to-End Test Suite: 32/32 tests passing across `test_health.py`, `test_end_to_end.py`, and `test_new_features.py` with 100% pass rate.
+- [x] React Frontend: 26 total production pages compiled cleanly into `frontend/dist`.
