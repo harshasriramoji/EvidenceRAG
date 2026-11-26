@@ -680,6 +680,15 @@ python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
   ```
   Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
+#### Separate Frontend and Backend Deployments
+If the frontend is hosted separately from the backend, set this environment variable in the frontend host's build settings:
+
+```text
+VITE_API_BASE_URL=https://evidencerag.onrender.com/api
+```
+
+The value must include `/api`. Rebuild and redeploy the frontend after setting it; Vite embeds this value during the build. If you later restrict backend CORS, allow the deployed frontend's origin.
+
 ---
 
 ## Automated Verification & Test Suite
